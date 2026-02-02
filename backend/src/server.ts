@@ -1,4 +1,4 @@
-import yargs from "yargs";
+import yargs from "yargs/yargs";
 import { hideBin } from "yargs/helpers";
 
 import { initRepo } from "./controllers/init.js";
@@ -17,8 +17,8 @@ yargs(hideBin(process.argv))
         type: 'string'
         })
     },addRepo)
-    .command('commit <files>', 'commit files', (yargs: any) => {
-        return yargs.positional('files', {
+    .command('commit <message>', 'commit files in staging area', (yargs: any) => {
+        return yargs.positional('commit', {
         describe: 'The file will be commited',
         type: 'string'
         })
