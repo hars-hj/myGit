@@ -25,11 +25,18 @@ yargs(hideBin(process.argv))
     },commitRepo)
     .command('push', 'push changes', {}, pushRepo)
     .command('pull', 'pull changes', {}, pullRepo)
-    .command('revert <commitID>', 'revert commited file', (yargs: any) => {
-        return yargs.positional('commitID', {
-        describe: 'The commited file will be reverted',
-        type: 'string'
-        })
-    },revert)
+    .command(
+        'revert <commitID>',
+        'revert commited file',
+        (yargs: any) => {
+            return yargs.positional('commitID', {
+            describe: 'The commited file will be reverted',
+            type: 'string'
+            })
+        },
+        (argv: any) => {
+            revert(argv.commitID);   // <-- THIS was missing
+        }
+        )
     .demandCommand(1, 'You need to specify a command')
     .help().argv;
