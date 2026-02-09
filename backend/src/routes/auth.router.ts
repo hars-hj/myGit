@@ -4,7 +4,7 @@ import { sign } from 'node:crypto';
 
 const authRouter = express.Router();
 
-authRouter.put('/login',Login);
-authRouter.put('/signup',Signup);
+authRouter.post('/login',Login);
+authRouter.post('/signup',Signup);
 
 export default authRouter;

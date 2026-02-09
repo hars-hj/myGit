@@ -6,7 +6,7 @@ import mongoose, {
 } from "mongoose";
 
 const RepositorySchema = new Schema(
-  {
+  { 
     name: {
       type: String,
       required: true,

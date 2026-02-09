@@ -3,9 +3,9 @@ import {GetAllUsers,EditUserProfile,DeleteUserProfile,GetUserProfile} from '../c
 const userRouter = express.Router();
 
 userRouter.get('/getallusers',GetAllUsers);
-userRouter.put('/edituserprofile',EditUserProfile);
-userRouter.delete('/deleteuserprofile',DeleteUserProfile);
-userRouter.get('/getuserprofile',GetUserProfile);
+userRouter.put('/edituserprofile/:id',EditUserProfile);
+userRouter.delete('/deleteuserprofile/:id',DeleteUserProfile);
+userRouter.get('/userprofile/:id',GetUserProfile);
 
 
 export default userRouter;

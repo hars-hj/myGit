@@ -6,6 +6,7 @@ import http, { METHODS } from 'http';
 import dotenv from 'dotenv';
 import mongoose from 'mongoose';
 import {Server} from 'socket.io'
+import cookieParser from "cookie-parser";
 
 import { initRepo } from "./controllers/init.js";
 import {addRepo} from "./controllers/add.js";
@@ -57,12 +58,17 @@ yargs(hideBin(process.argv))
          const app = express();
          app.use(bodyParser.json());
          app.use(express.json());
-         
+         app.use(cookieParser());
+
          const mongourl = process.env.MONGO_URL!;
           mongoose.connect(mongourl)
          .then(()=>console.log("mongodb connected")).catch((err)=>console.error("error connecting to mongodb : ",err));
 
-         app.use(cors({origin:'*'}));
+         app.use(cors(
+            {origin:'http://localhost:5173/',
+                credentials: true
+            }
+        ));
          app.use('/',mainRouter);
         
          
@@ -70,8 +76,9 @@ yargs(hideBin(process.argv))
          const httpServer =  http.createServer(app);
          const io = new Server(httpServer,
             {cors:{
-                origin:'*',
-                methods: ['GET','POST']
+                origin:'http://localhost:5173',
+                methods: ['GET','POST'],
+                credentials:true
             }}
          );
 
