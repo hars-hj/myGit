@@ -13,11 +13,11 @@ const repoRouter = express.Router();
 
 repoRouter.post('/create',CreateReposetory);
 repoRouter.get('/all',fetchAllReposetory);
-repoRouter.get('/:id',fetchReposetoryById);
-repoRouter.get('/:name',fetchReposetoryByName);
-repoRouter.get('/:userId',fetchReposetoryForCurrentUser);
+repoRouter.get('/id/:id',fetchReposetoryById);
+repoRouter.get('/name/:name',fetchReposetoryByName);
+repoRouter.get('/userId/:userId',fetchReposetoryForCurrentUser);
 repoRouter.patch('/toggle/:id',VisibilityToggle);
 repoRouter.put('/update/:id',UpdateReposetoryById);
 repoRouter.delete('/delete/:id',DeleteReposetoryById);
 
-export default repoRouter;
+export default repoRouter; 

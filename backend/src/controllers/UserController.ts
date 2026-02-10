@@ -4,14 +4,14 @@ import mongoose from "mongoose";
 import {User} from '../models/userModel.js'
 import bcrypt from 'bcryptjs';
 
-type Params = { id: string,password:string,email:string };
+type Params = { id: string };
 
 //get all users
 async function GetAllUsers ( req: Request,res: Response){
      try{
         const users = await User.find({});
         res.status(200).json(users);
-     }catch(err){
+     }catch(err){ 
         console.error("error fetching users",err);
          res.status(500).json({message:"server error"});
      }
