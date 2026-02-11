@@ -8,4 +8,4 @@ issueRouter.get('/:id',FetchIssue);
 issueRouter.put('/update/:id',UpdateIssue);
 issueRouter.delete('/delete/:id',DeleteIssue);
 
-export default issueRouter;
+export default issueRouter; 
