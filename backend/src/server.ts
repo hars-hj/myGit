@@ -65,7 +65,8 @@ yargs(hideBin(process.argv))
          .then(()=>console.log("mongodb connected")).catch((err)=>console.error("error connecting to mongodb : ",err));
 
          app.use(cors(
-            {origin:'http://localhost:5173/',
+            {origin:'http://localhost:5173',
+                 methods: ['GET','POST','DELETE','PUT','PATCH'],
                 credentials: true
             }
         ));

@@ -56,7 +56,7 @@ type LoginBody = {
     //sending cookie
     res.cookie("token", token, {
       httpOnly: true,
-      sameSite: "lax",
+       sameSite: 'lax',
       secure: process.env.NODE_ENV === "production",
       maxAge: 7 * 24 * 60 * 60 * 1000,
     });
@@ -128,7 +128,7 @@ type LoginBody = {
 
     res.cookie("token", token, {
       httpOnly: true,
-      sameSite: "lax",
+       sameSite: 'lax',
       secure: process.env.NODE_ENV === "production",
       maxAge: 7 * 24 * 60 * 60 * 1000,
     });
