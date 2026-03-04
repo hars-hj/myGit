@@ -1,11 +1,13 @@
-// src/context/AuthContext.tsx
+
 import React, { createContext, useContext, useEffect, useMemo, useState } from "react";
-import { api } from "./lib/api";
+import { api } from "../lib/api"; 
 
 export type User = {
   _id: string;
   username: string;
   email: string;
+  avatarUrl?: string; // add 
+  following?: string[]; 
 };
 
 type LoginInput = {
@@ -20,6 +22,9 @@ type AuthContextValue = {
   refresh: () => Promise<void>;
   login: (data: LoginInput) => Promise<void>;
   logout: () => Promise<void>;
+
+  authReady: boolean; 
+  userId: string | null; 
 };
 
 const AuthContext = createContext<AuthContextValue | undefined>(undefined);
@@ -29,6 +34,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [loading, setLoading] = useState(true);
 
   const fetchMe = async () => {
+    setLoading(true); //  ensure refresh() toggles loading too
     try {
       const res = await api.get<User | { user: User }>("/api/me");
       const payload: any = res.data;
@@ -54,7 +60,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     setUser(null);
   };
 
-  const value = useMemo(
+  const value = useMemo<AuthContextValue>(
     () => ({
       user,
       isAuthed: !!user,
@@ -62,6 +68,10 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       refresh: fetchMe,
       login,
       logout,
+
+      //  additions
+      authReady: !loading,
+      userId: user?._id ?? null,
     }),
     [user, loading]
   );

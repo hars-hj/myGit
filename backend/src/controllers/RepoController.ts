@@ -44,7 +44,7 @@ async function fetchAllReposetory (req: Request,res: Response){
        try{
               const repositories = await Repository.find({})
               .populate("owner")
-              .populate("issues");
+              .populate({ path: "issues", populate: { path: "owner", select: "username _id" } });
 
               res.status(200).json(repositories);
            }catch(err){ 
@@ -64,7 +64,7 @@ async function fetchReposetoryById  (req: Request<Params>,res: Response){
 
             const repository = await Repository.find({_id:id})
              .populate("owner")
-            .populate("issues");
+            .populate({ path: "issues", populate: { path: "owner", select: "username _id" } });
 
             res.status(200).json(repository);
            }catch(err){ 
@@ -221,4 +221,19 @@ const DeleteReposetoryById = async (req: Request<Params>, res: Response) => {
   }
 };
 
-export{CreateReposetory,VisibilityToggle,fetchAllReposetory,fetchReposetoryById,fetchReposetoryByName,fetchReposetoryForCurrentUser,UpdateReposetoryById,DeleteReposetoryById};
+// fetch all issues for a given repository
+const FetchIssuesForRepo = async (req: Request<Params>, res: Response) => {
+  try {
+    const { id } = req.params;
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({ message: "Invalid repository id" });
+    }
+    const issues = await Issue.find({ repository: id }).populate('owner', 'username');
+    return res.status(200).json({ issues });
+  } catch (err) {
+    console.error("error fetching issues for repo", err);
+    return res.status(500).json({ message: "server error" });
+  }
+};
+
+export{CreateReposetory,VisibilityToggle,fetchAllReposetory,fetchReposetoryById,fetchReposetoryByName,fetchReposetoryForCurrentUser,UpdateReposetoryById,DeleteReposetoryById,FetchIssuesForRepo};

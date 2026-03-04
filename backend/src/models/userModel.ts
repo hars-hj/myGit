@@ -53,8 +53,8 @@ const UserSchema = new Schema(
 );
 
 // indexes
-UserSchema.index({ username: 1 }, { unique: true });
-UserSchema.index({ email: 1 }, { unique: true });
+// UserSchema.index({ username: 1 }, { unique: true });
+// UserSchema.index({ email: 1 }, { unique: true });
 
 export type UserDoc = InferSchemaType<typeof UserSchema> & {
   _id: Types.ObjectId;

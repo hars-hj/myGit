@@ -6,7 +6,8 @@ import {CreateReposetory,
     fetchReposetoryForCurrentUser,
     UpdateReposetoryById,
     DeleteReposetoryById,
-    VisibilityToggle
+    VisibilityToggle,
+    FetchIssuesForRepo
 } from '../controllers/RepoController.js'
 
 const repoRouter = express.Router();

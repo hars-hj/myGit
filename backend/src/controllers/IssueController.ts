@@ -19,14 +19,29 @@ async function CreateIssue(req: Request,res: Response){
             return res.status(400).json({ message: "Invalid reposetory ID" });
             }
 
+    // ensure repository exists (any logged-in user may open an issue)
+    const repo = await Repository.findById(repository);
+    if (!repo) {
+      return res.status(404).json({ message: "Repository not found" });
+    }
+    // req.user comes from requireAuth middleware
+    const userId = (req as any).user?.id;
+    if (!userId) {
+      return res.status(401).json({ message: "Authentication required" });
+    }
+
     const newIssue = new Issue({
         title,
         description,
         status,
-        repository
+        repository,
+        owner: userId,   // set owner
     });
 
     const issue  = await newIssue.save();
+
+    // add issue reference to repo
+    await Repository.findByIdAndUpdate(repository, { $push: { issues: issue._id } });
 
     res.status(201).json({message:"issue created successfully",issue});
     } catch(err){
@@ -40,6 +55,14 @@ async function UpdateIssue(req: Request<params>,res: Response){
     try{
          const {id}=req.params;
          const{title,description,status} = req.body;
+
+         // ensure owner
+         const userId = (req as any).user?.id;
+         const existing = await Issue.findById(id);
+         if (!existing) return res.status(404).json({message:"Issue not found"});
+         if (!userId || existing.owner.toString() !== userId) {
+           return res.status(403).json({message:"Only issue owner may update"});
+         }
 
          let updateissuelist:updateissue={};
          if(title) updateissuelist.title = title;
@@ -58,8 +81,18 @@ async function UpdateIssue(req: Request<params>,res: Response){
 async function DeleteIssue (req: Request,res: Response){
     try{
          const {id}=req.params;
+         const userId = (req as any).user?.id;
+         const existing = await Issue.findById(id);
+         if (!existing) return res.status(404).json({message:"Issue not found"});
+         if (!userId || existing.owner.toString() !== userId) {
+           return res.status(403).json({message:"Only issue owner may delete"});
+         }
          const issue = await Issue.findByIdAndDelete({_id:id});
-         res.status(200).json({message:"issue deleted successfully"});
+        // also remove from repository
+        if (issue) {
+          await Repository.findByIdAndUpdate(issue.repository, { $pull: { issues: issue._id } });
+        }
+        res.status(200).json({message:"issue deleted successfully"});
     } catch(err){
         console.error("error fetching  issue by id",err);
         res.status(500).json({message:"server error"});
@@ -69,7 +102,7 @@ async function DeleteIssue (req: Request,res: Response){
 async function FetchAllIssue (req: Request,res: Response){
       try{
        
-         const issues = await Issue.find({});
+         const issues = await Issue.find({}).populate('owner', 'username');
          res.status(200).json({issues});
     } catch(err){
         console.error("error fetching all issues",err);
@@ -80,7 +113,7 @@ async function FetchAllIssue (req: Request,res: Response){
 async function FetchIssue  (req: Request<params>,res: Response){
       try{
          const {id}=req.params;
-         const issue = await Issue.find({_id:id});
+         const issue = await Issue.find({_id:id}).populate('owner', 'username');
          res.status(200).json({issue});
     } catch(err){
         console.error("error fetching  issue by id",err);
@@ -88,4 +121,20 @@ async function FetchIssue  (req: Request<params>,res: Response){
     }
 };
 
-export {CreateIssue,UpdateIssue,DeleteIssue,FetchAllIssue,FetchIssue};
+
+
+async function FetchIssuesForRepo(req: Request<params>, res: Response) {
+  try {
+    const { id } = req.params;
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({ message: "Invalid repo id" });
+    }
+    const issues = await Issue.find({ repository: id }).populate('owner', 'username');
+    res.status(200).json({ issues });
+  } catch (err) {
+    console.error("error fetching issues for repo", err);
+    res.status(500).json({ message: "server error" });
+  }
+}
+
+export {CreateIssue,UpdateIssue,DeleteIssue,FetchAllIssue,FetchIssue,FetchIssuesForRepo};
