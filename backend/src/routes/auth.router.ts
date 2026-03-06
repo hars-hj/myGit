@@ -1,11 +1,14 @@
 import express from 'express';
-import {Signup,Login} from '../controllers/AuthController.js'
+import {Signup,Login,Logout} from '../controllers/AuthController.js'
 import { requireAuth, AuthRequest } from "../middleware/authMiddleware.js";
 import {User} from "../models/userModel.js";
 const authRouter = express.Router();
 
-authRouter.post('/login',Login);
-authRouter.post('/signup',Signup);
+  authRouter.post('/logout',Logout);
+  authRouter.post('/login',Login);
+  authRouter.post('/signup',Signup);
+  
+
 
 authRouter.get("/me", requireAuth, async (req: AuthRequest, res) => {
   try {

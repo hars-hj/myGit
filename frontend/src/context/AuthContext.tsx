@@ -22,7 +22,7 @@ type AuthContextValue = {
   refresh: () => Promise<void>;
   login: (data: LoginInput) => Promise<void>;
   logout: () => Promise<void>;
-
+  setUser: React.Dispatch<React.SetStateAction<User | null>>
   authReady: boolean; 
   userId: string | null; 
 };
@@ -68,7 +68,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       refresh: fetchMe,
       login,
       logout,
-
+      setUser,
       //  additions
       authReady: !loading,
       userId: user?._id ?? null,

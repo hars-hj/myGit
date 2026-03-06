@@ -2,7 +2,7 @@ import { useState, useEffect, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { api } from "../../lib/api.js";
 import Navbar from "../Navbar/Navbar.tsx"; 
-import { useAuth } from "../../context/AuthContext"; // for current user id
+//import { useAuth } from "../../context/AuthContext"; 
 
 type Repo = {
   _id?: string;
@@ -184,14 +184,14 @@ function Dashboard() {
 function RepoRow({ repo, compact }: { repo: Repo; compact?: boolean }) {
   const visibility = repo.visibility ?? "public";
   const navigate = useNavigate();
-  const { userId } = useAuth();
+ // const { userId } = useAuth();
 
   const handleNewIssue = () => {
     const id = repo._id ?? repo.id;
     if (id) navigate(`/repos/${id}/issues/new`);
   };
 
-  const isOwner = repo.owner && (repo.owner as any)._id === userId;
+  //const isOwner = repo.owner && (repo.owner as any)._id === userId;
 
   return (
     <div style={styles.repoRow}>

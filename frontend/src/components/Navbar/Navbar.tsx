@@ -1,10 +1,29 @@
 import { Link, useNavigate } from "react-router-dom";
-import { useAuth } from "../../context/AuthContext"; // adjust path
+import { useAuth } from "../../context/AuthContext";
+import ProfileDropdown from "./ProfileDropdown";
+
+import {api} from "../../lib/api"; 
 
 function Navbar() {
   const navigate = useNavigate();
-  const { user, loading, isAuthed } = useAuth();
+   const {setUser} = useAuth();
+   
+   function onProfile(){
+    navigate("/profile");
+  }
 
+  async function  onLogout(){
+       try{
+        await api.post('/api/logout',{withcredentials:true})
+        .then(()=>{
+          setUser(null);
+          navigate("/signup");
+        }
+      )
+       }catch(err){
+        console.error("Logout failed",err);
+       }
+  }
   return (
     <header style={styles.header}>
         
@@ -25,34 +44,20 @@ function Navbar() {
             + New repo
           </button>
 
-          <button
-            style={styles.profileBtn}
-            onClick={() => navigate("/profile")}
-            title="Profile"
-            disabled={loading || !isAuthed}
-          >
-            <img
-              src={getAvatar(user)}
-              alt="profile"
-              style={{
-                ...styles.profileImg,
-                opacity: loading || !isAuthed ? 0.6 : 1,
-              }}
-            />
-          </button>
+          <ProfileDropdown onProfile={onProfile} onLogout={onLogout}/>
         </div>
       </div>
     </header>
   );
 }
 
-function getAvatar(user: any) {
+// function getAvatar(user: any) {
   
-  return (
-    user?.avatarUrl ??
-    "https://avatars.githubusercontent.com/u/9919?s=80&v=4"
-  );
-}
+//   return (
+//     user?.avatarUrl ??
+//     "https://avatars.githubusercontent.com/u/9919?s=80&v=4"
+//   );
+// }
 
 const styles: Record<string, React.CSSProperties> = {
   header: {

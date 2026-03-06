@@ -37,7 +37,7 @@ function ViewRepo() {
       try {
         const res = await api.get<Repo[]>(`/api/repos/id/${repoId}`);
         const data = res.data;
-        console.log("Fetched repo data:", data); // log raw response
+      
         if (Array.isArray(data) && data.length > 0) {
           setRepo(data[0]);
         } else {
